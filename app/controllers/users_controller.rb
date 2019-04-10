@@ -34,4 +34,21 @@ class UsersController < ApplicationController
     @user.destroy
     render json: @users
   end
+
+  def user_with_most_tickets
+    max = 0
+    @muser = null
+    User.all.each do |user|
+      i = 0
+      tickets = Ticket.where(user_id: user.id)
+      tickets.each do
+        i += 1
+      end
+      if i>max
+        @muser = user
+        max = i
+      end
+    end
+    render json: @muser
+  end
 end
