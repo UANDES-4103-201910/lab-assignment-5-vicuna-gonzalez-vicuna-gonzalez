@@ -1,6 +1,10 @@
 class TicketsController < ApplicationController
   def index
-    @tickets = Ticket.all
+    if params[:ticket_type_id]
+      @tickets = TicketType.find(params[:ticket_type_id]).includes(:ticket_types).tickets
+    else
+      @tickets = Ticket.all
+    end
     render json: @tickets
   end
 
