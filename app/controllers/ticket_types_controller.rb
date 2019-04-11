@@ -1,4 +1,5 @@
 class TicketTypesController < ApplicationController
+  protect_from_forgery
   def index
     @ticket_types = TicketType.all
     render json: @ticket_types
@@ -17,7 +18,9 @@ class TicketTypesController < ApplicationController
   end
 
   def create
-    @ticket_type = TicketType.new(params)
+    @ticket_type = TicketType.new(ticket_type_params)
+    @ticket_type.save
+    render json: @ticket_type
   end
 
   def update
@@ -33,5 +36,9 @@ class TicketTypesController < ApplicationController
   def destroy
     @ticket_type.destroy
     render json: @users
+  end
+
+  def ticket_type_params
+    params.permit(:event_id, :price, :ticket_zone_id)
   end
 end

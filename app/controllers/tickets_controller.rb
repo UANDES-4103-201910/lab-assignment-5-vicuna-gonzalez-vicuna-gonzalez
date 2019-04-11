@@ -1,4 +1,5 @@
 class TicketsController < ApplicationController
+  protect_from_forgery
   def index
     if params[:ticket_type_id]
       @tickets = TicketType.find(params[:ticket_type_id]).includes(:ticket_types).tickets
@@ -21,12 +22,14 @@ class TicketsController < ApplicationController
   end
 
   def create
-    @ticket = Ticket.new(params)
+    @ticket = Ticket.new(ticket_params)
+    @ticket.save
+    render json: @ticket
   end
 
   def update
     respond_to do |format|
-      if @ticket.update(params)
+      if @ticket.update(ticket_params)
         render json: @ticket
       else
         format.json { render json: @ticket.errors, status: :unprocessable_entity }
@@ -37,5 +40,9 @@ class TicketsController < ApplicationController
   def destroy
     @ticket.destroy
     render json: @ticket
+  end
+
+  def ticket_params
+    params.permit(:ticket_type_id, :order_id)
   end
 end

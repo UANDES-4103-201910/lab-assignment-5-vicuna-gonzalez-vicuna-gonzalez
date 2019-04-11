@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_action :set_user, only: [:show, :edit, :update, :destroy]
+  protect_from_forgery
   def index
     @users = User.all
     render json: @users
@@ -17,12 +19,14 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.new(params)
+    @user = User.new(user_params)
+    @user.save
+    render json: @user
   end
 
   def update
     respond_to do |format|
-      if @user.update(params)
+      if @user.update(user_params)
         render json: @user
       else
         format.json { render json: @user.errors, status: :unprocessable_entity }
@@ -50,5 +54,12 @@ class UsersController < ApplicationController
       end
     end
     render json: @muser
+  end
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+  def user_params
+    params.permit(:name, :email, :password, :last_name, :address)
   end
 end
